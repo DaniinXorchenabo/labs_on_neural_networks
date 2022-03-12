@@ -23,11 +23,13 @@ async def process(data):
 
 
 async def download_files(urls: list[tuple[str, str]]):
-    async with aiohttp.ClientSession() as session:
-        await (stream.repeat(session)
-               | pipe.zip(stream.iterate(urls))
-               | pipe.starmap(fetch, ordered=False, task_limit=10)
-               | pipe.map(process))
+    if bool(urls):
+        async with aiohttp.ClientSession() as session:
+            await (stream.repeat(session)
+                   | pipe.zip(stream.iterate(urls))
+                   | pipe.starmap(fetch, ordered=False, task_limit=10)
+                   | pipe.map(process))
+
 
 
 if __name__ == '__main__':
